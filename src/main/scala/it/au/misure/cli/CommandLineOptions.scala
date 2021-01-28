@@ -95,7 +95,7 @@ class CommandLineOptions extends Serializable{
 		o
 	}
 	
-		def giorni: CliOption = {
+	def giorni: CliOption = {
 	  val o = new CliOption("S", "giorni", true, "Sequenza di giorni di riferimento: \n" + 
 	    "<G,G,G,G> solo i giorni specificati, \n " +
       "<,G,G,G>  dal primo del mese al primo della lista seguito dai giorni specificati \n" +
@@ -131,8 +131,6 @@ class CommandLineOptions extends Serializable{
 		og.addOption(aggregatiOrari)
 		og.addOption(aggregatiAM)
 		og.addOption(creaFM)
-//		og.addOption(aggregatiIP)
-//		og.addOption(exportOracle)
 		og.addOption(aggiornamento)
 		og.addOption(test)
 	}

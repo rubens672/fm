@@ -69,13 +69,13 @@ import scala.xml.pull.XMLEventReader
  */
 object Injection extends LoggingSupport {
 
-  val format = new SimpleDateFormat("yyyy-MM-dd")
-  val UTF8_BOM =  "\uFEFF"
-  
-	/**
-	 * Legge le variabili del file di properties.
-	 */
-	val prop:Properties = new CreateProperties().prop
+      val format = new SimpleDateFormat("yyyy-MM-dd")
+      val UTF8_BOM =  "\uFEFF"
+      
+    	/**
+    	 * Legge le variabili del file di properties.
+    	 */
+    	val prop:Properties = new CreateProperties().prop
 
 			/**
 			 * Perdita di tensione
@@ -123,13 +123,13 @@ object Injection extends LoggingSupport {
 			 * @return una lista di record contenti le informazioni del file xml
 			 */
        def letturaEValidazioni_vecchioFormato(rdd1: (Boolean,(String,String),String), dataelaborazione:java.sql.Timestamp): List[(Row)] = {
-        try {
+          try {
 				  
-				    val noBom = if(rdd1._2._2.startsWith(UTF8_BOM)){
-						  rdd1._2._2.substring(1)
-						}else{
-						  rdd1._2._2
-						}
+  				    val noBom = if(rdd1._2._2.startsWith(UTF8_BOM)){
+  						  rdd1._2._2.substring(1)
+  						}else{
+  						  rdd1._2._2
+  						}
 					    val xml = XML.loadString(noBom)
 							val datiPod = (xml \\ "FM" \\ "DatiPod")
 
@@ -304,27 +304,26 @@ object Injection extends LoggingSupport {
   
   							val curva = for ( (a, r) <- (itRes zip irRes)) yield  Row.fromSeq(a ++ r)// ++ newFields)
   									curva
-  									//						 itRes
   					}
   
   					dpRes.toList
 
 				} catch {
-				case e: Exception => {
-					e.printStackTrace()
-					Nil
-				}
+  				case e: Exception => {
+  					e.printStackTrace()
+  					Nil
+  				}
 				}
       }
   
        def letturaEValidazioni_2G(rdd1: (Boolean,(String,String),String), dataelaborazione:java.sql.Timestamp): List[(Row)] = {
-        try {
+          try {
 				  
-				    val noBom = if(rdd1._2._2.startsWith(UTF8_BOM)){
-						  rdd1._2._2.substring(1)
-						}else{
-						  rdd1._2._2
-						}
+  				    val noBom = if(rdd1._2._2.startsWith(UTF8_BOM)){
+  						  rdd1._2._2.substring(1)
+  						}else{
+  						  rdd1._2._2
+  						}
 					    val xml = XML.loadString(noBom)
 							val datiPod = (xml \\ "FM" \\ "DatiPod")
 
@@ -455,42 +454,40 @@ object Injection extends LoggingSupport {
   
   							val curva = for ( (a, r) <- (itRes zip irRes)) yield  Row.fromSeq(a ++ r)
   									curva
-  									//						 itRes
   					}
   
   					dpRes.toList
 
 				} catch {
-				case e: Exception => {
-					e.printStackTrace()
-					Nil
-				}
+  				case e: Exception => {
+  					e.printStackTrace()
+  					Nil
+  				}
 				}
       }
        
-			def letturaEValidazioni(rdd1: (Boolean,(String,String),String), dataelaborazione:java.sql.Timestamp): List[(Row)] = {
-				val nomeFile = rdd1._2._1
-			
-  			val ret = if(isNuovo2G(regex_2G, nomeFile)){
-  			  letturaEValidazioni_2G(rdd1, dataelaborazione)
-  			}else{
-  			  letturaEValidazioni_vecchioFormato(rdd1, dataelaborazione)
-  			}
+  	def letturaEValidazioni(rdd1: (Boolean,(String,String),String), dataelaborazione:java.sql.Timestamp): List[(Row)] = {
+  		val nomeFile = rdd1._2._1
+  	
+    	val ret = if(isNuovo2G(regex_2G, nomeFile)){
+    	  letturaEValidazioni_2G(rdd1, dataelaborazione)
+    	}else{
+    	  letturaEValidazioni_vecchioFormato(rdd1, dataelaborazione)
+    	}
         ret
-		  }
+  	}
 
 
 
-/**
- * Esegue la validazione di congruenza tra il nome del file xml e i dati contenuti in esso.
- * @param rdd rappresenta il file xml.
- * @return un valore booleano corrispondente alla validazione e un messaggio d'errore.
- */
-def validation(rdd: (Boolean,(String,String),String)) : (Boolean,(String,String),String) =
-{
+  /**
+   * Esegue la validazione di congruenza tra il nome del file xml e i dati contenuti in esso.
+   * @param rdd rappresenta il file xml.
+   * @return un valore booleano corrispondente alla validazione e un messaggio d'errore.
+   */
+  def validation(rdd: (Boolean,(String,String),String)) : (Boolean,(String,String),String) = {
 		if(rdd._1){
 			try{
-				val nome_file = if(rdd._2._1.lastIndexOf("/") > -1) rdd._2._1.substring(rdd._2._1.lastIndexOf("/")+1).split("_")
+				    val nome_file = if(rdd._2._1.lastIndexOf("/") > -1) rdd._2._1.substring(rdd._2._1.lastIndexOf("/")+1).split("_")
 						else if (rdd._2._1.lastIndexOf("\\") > -1) rdd._2._1.substring(rdd._2._1.lastIndexOf("\\")+1).split("_")
 						else rdd._2._1.split("_")
 						
@@ -500,7 +497,7 @@ def validation(rdd: (Boolean,(String,String),String)) : (Boolean,(String,String)
 						  rdd._2._2
 						}
 		
-				val xml = XML.loadString( noBom )
+				    val xml = XML.loadString( noBom )
 						
 						//informazioni nome file versione prototipo
 						val PIvaDistributoreNF = nome_file(0)
@@ -555,30 +552,29 @@ def validation(rdd: (Boolean,(String,String),String)) : (Boolean,(String,String)
 	  ret
 	}
 
-/**
- * Valida la consistenza file xml tramite dei XSD in termini di vincoli: quali elementi e attributi possono apparire, 
- * in quale relazione reciproca, quale tipo di dati può contenere; al fine di accertare se i tipi di dati appartengono al documento xml. 
- * @param rdd rappresenta il file xml.
- * @return un valore booleano corrispondente alla validazione e un messaggio d'errore.
- */
-def validationXSD(rdd: (String,String) ) : (Boolean,(String,String),String) =
-{
+  /**
+   * Valida la consistenza file xml tramite dei XSD in termini di vincoli: quali elementi e attributi possono apparire, 
+   * in quale relazione reciproca, quale tipo di dati può contenere; al fine di accertare se i tipi di dati appartengono al documento xml. 
+   * @param rdd rappresenta il file xml.
+   * @return un valore booleano corrispondente alla validazione e un messaggio d'errore.
+   */
+  def validationXSD(rdd: (String,String) ) : (Boolean,(String,String),String) = {
 		try{
-			val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)//CRLF e LF
-			
-			val nomeFile = rdd._1
-			
-			val f1:Source = if(isNuovo2G(regex_2G, nomeFile)){
-			  new StreamSource(defdomplextypes_2G)
-			}else{
-			  new StreamSource(defdomplextypes)
-			}
-			
-			val f2:Source = if(isNuovo2G(regex_2G, nomeFile)){
-			  new StreamSource(defsimpletypes_2G)
-			}else{
-			  new StreamSource(defsimpletypes)
-			}
+    			val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)//CRLF e LF
+    			
+    			val nomeFile = rdd._1
+    			
+    			val f1:Source = if(isNuovo2G(regex_2G, nomeFile)){
+    			  new StreamSource(defdomplextypes_2G)
+    			}else{
+    			  new StreamSource(defdomplextypes)
+    			}
+    			
+    			val f2:Source = if(isNuovo2G(regex_2G, nomeFile)){
+    			  new StreamSource(defsimpletypes_2G)
+    			}else{
+    			  new StreamSource(defsimpletypes)
+    			}
 
     			val f3 =  if(nomeFile.contains("_RFO_") && nomeFile.contains( v2_2G )){
     			  new StreamSource(flusso1_rfo_v2)
@@ -648,36 +644,35 @@ def validationXSD(rdd: (String,String) ) : (Boolean,(String,String),String) =
 					
           (true,rdd,"OK")
 		}catch{
-		case e: Exception => 
-		  e.printStackTrace()
-		(false, (rdd._1, e.getMessage() ),"001")
+  		case e: Exception => 
+  		  e.printStackTrace()
+  		(false, (rdd._1, e.getMessage() ),"001")
 		}
+  }
 
-}
 
+  /**
+   * Il metodo main è convenzionalmente stabilito come punto di partenza per l'esecuzione del programma. Vengono istanziate le classi che accedono al contesto di Cloudera.
+   * @param args contiene le opzioni che vengono passate al programma Scala da riga di comando.
+   */
+  def main(args: Array[String]) {
 
-/**
- * Il metodo main è convenzionalmente stabilito come punto di partenza per l'esecuzione del programma. Vengono istanziate le classi che accedono al contesto di Cloudera.
- * @param args contiene le opzioni che vengono passate al programma Scala da riga di comando.
- */
-def main(args: Array[String]) {
-
-  val commandLineOptions = new CommandLineOptions()
-  val commonsCliUtils = new CommonsCliUtils()
-	val commandLine:CommandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions)
+      val commandLineOptions = new CommandLineOptions()
+      val commonsCliUtils = new CommonsCliUtils()
+    	val commandLine:CommandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions)
 			val argsObjMaster = new CommonsCliUtils().getArgs(commandLine)
 			
 
 			log.info("***** Inizio processo " + argsObjMaster.appName + " *****")
 
 			val conf = new SparkConf()
-			.setAppName( argsObjMaster.appName )
-			.set("spark.shuffle.service.enabled", "false")
-			.set("spark.dynamicAllocation.enabled", "false")
-			.set("spark.io.compression.codec", "snappy")
-			.set("spark.rdd.compress", "true")
-			.set("spark.serializer", "org.apache.spark.serializer.JavaSerializer")
-			.setMaster( argsObjMaster.master )
+  			.setAppName( argsObjMaster.appName )
+  			.set("spark.shuffle.service.enabled", "false")
+  			.set("spark.dynamicAllocation.enabled", "false")
+  			.set("spark.io.compression.codec", "snappy")
+  			.set("spark.rdd.compress", "true")
+  			.set("spark.serializer", "org.apache.spark.serializer.JavaSerializer")
+  			.setMaster( argsObjMaster.master )
 
 			val sc = new SparkContext(conf)
 			sc.hadoopConfiguration.set("mapreduce.input.fileinputformat.input.dir.recursive","true")
@@ -693,7 +688,7 @@ def main(args: Array[String]) {
 			sqlCtx.setConf("hive.exec.dynamic.partition","true")
 			sqlCtx.setConf("hive.exec.dynamic.partition.mode","nonstrict")
 			
-			  try{
+			try{
 
 						val quartiPDO = sc.getConf.get("spark.fm.quarti")
 						val report =  sc.getConf.get("spark.fm.report")
@@ -710,7 +705,6 @@ def main(args: Array[String]) {
 				
 
 						log.info("*** sc.master: " + sc.master)
-//						log.info("*** injection: " + injection)
 						log.info("*** injectionTmp: " + injectionTmp)
 						log.info("*** rootDir: " + rootDir)
 						log.info("*** minPartitions: " + minPartitions)
@@ -739,11 +733,11 @@ def main(args: Array[String]) {
 
 						
 						
-					val tmpRootDir = s"${injectionTmp}${File.separator}${rootDir}"
-					
-					val elencoUDDTmp:List[String] = scansionaUDD(tmpRootDir)
-					val rddUDDTmp = sc.parallelize(elencoUDDTmp, minPartitions.toInt).setName("Scansiona alberatura temporanea")
-					rddUDDTmp.cache()
+  					val tmpRootDir = s"${injectionTmp}${File.separator}${rootDir}"
+  					
+  					val elencoUDDTmp:List[String] = scansionaUDD(tmpRootDir)
+  					val rddUDDTmp = sc.parallelize(elencoUDDTmp, minPartitions.toInt).setName("Scansiona alberatura temporanea")
+  					rddUDDTmp.cache()
 					  
 					  val lists = rddUDDTmp.mapPartitions{partition => 
 					    val ret = partition
@@ -752,27 +746,27 @@ def main(args: Array[String]) {
 					      ret
 					  }.collect().map(xml => "file://" + slash +  xml.getPath).toList
 					  
-    					val rddValidAll = sc.wholeTextFiles(lists.mkString(","), minPartitions.toInt).setName("Acquisizione files di misurazione")
-    					log.info(s"*** WholeTextFiles OK")
+      			val rddValidAll = sc.wholeTextFiles(lists.mkString(","), minPartitions.toInt).setName("Acquisizione files di misurazione")
+      			log.info(s"*** WholeTextFiles OK")
+  
+  					
+  					val rddXsd = rddValidAll.map(validationXSD( _ )).setName("Validazione xsd")
+  					log.info("***** ValidationXSD OK")
+  
+  					val rdd2 = rddXsd.map(validation).setName("Validazione nome file")
+  					rdd2.cache()
+  					log.info("***** Validazione nome file OK")
+  
+  
+  					val validPdo = rdd2.filter( _._1 ).flatMap( letturaEValidazioni( _ , dataelaborazione) ).setName("Lettura e validazioni")
+  					log.info("***** lettura e validazioni OK")
+  					
+  
+  					val dfQS1 = sqlCtx.createDataFrame(validPdo, schemaQuarti)
+  					log.info("***** creazione DataFrame schema quarti OK")
 
-							
-							val rddXsd = rddValidAll.map(validationXSD( _ )).setName("Validazione xsd")
-							log.info("***** ValidationXSD OK")
 
-							val rdd2 = rddXsd.map(validation).setName("Validazione nome file")
-							rdd2.cache()
-							log.info("***** Validazione nome file OK")
-
-
-							val validPdo = rdd2.filter( _._1 ).flatMap( letturaEValidazioni( _ , dataelaborazione) ).setName("Lettura e validazioni")
-							log.info("***** lettura e validazioni OK")
-							
-
-							val dfQS1 = sqlCtx.createDataFrame(validPdo, schemaQuarti)
-							log.info("***** creazione DataFrame schema quarti OK")
-
-
-							dfQS1
+						dfQS1
 							.write
 							.format("parquet")
 							.mode(SaveMode.Append)
@@ -781,73 +775,72 @@ def main(args: Array[String]) {
 							log.info("***** insert misure quarti OK")
 							
 
-							/*
-							 * INSERT REPORT
-							 */
-							val rdd2NoValid = rdd2.filter( !_._1 ).map(f => Row(f._3, f._2._1, f._2._2, dataelaborazione, (argsObjMaster.anno + argsObjMaster.mese).toInt))
-							log.info("***** filtro Report file non validi OK")
+					 /*
+						* INSERT REPORT
+						*/
+						val rdd2NoValid = rdd2.filter( !_._1 ).map(f => Row(f._3, f._2._1, f._2._2, dataelaborazione, (argsObjMaster.anno + argsObjMaster.mese).toInt))
+						log.info("***** filtro Report file non validi OK")
 
-							val dfQS3 = sqlCtx.createDataFrame(rdd2NoValid, schemaReport)      
-							log.info("***** creazione DataFrame Report misure non valide OK")
+						val dfQS3 = sqlCtx.createDataFrame(rdd2NoValid, schemaReport)      
+						log.info("***** creazione DataFrame Report misure non valide OK")
 							
 
-							dfQS3
+						dfQS3
 							.write
 							.format("parquet")
 							.mode(SaveMode.Append)
 							.partitionBy("annomese")
 							.save(report)
-							log.info("***** insert Report misure non valide OK")
+						log.info("***** insert Report misure non valide OK")
 
 
-							val rddValid = rdd2.filter( _._1 ).map(f => Row("000", f._2._1, "OK", dataelaborazione, (argsObjMaster.anno + argsObjMaster.mese).toInt))
-							log.info("***** filtro Report file validi OK")
+						val rddValid = rdd2.filter( _._1 ).map(f => Row("000", f._2._1, "OK", dataelaborazione, (argsObjMaster.anno + argsObjMaster.mese).toInt))
+						log.info("***** filtro Report file validi OK")
 
-							val dfQS4 = sqlCtx.createDataFrame(rddValid, schemaReport)       
-							log.info("***** creazione DataFrame Report misure valide OK")
+						val dfQS4 = sqlCtx.createDataFrame(rddValid, schemaReport)       
+						log.info("***** creazione DataFrame Report misure valide OK")
 
-							dfQS4
+						dfQS4
 							.write
 							.format("parquet")
 							.mode(SaveMode.Append)
 							.partitionBy("annomese")
 							.save(report)
-							log.info("***** insert Report misure valide OK")
+						log.info("***** insert Report misure valide OK")
 							
-							/*
-							 * aggiorno le partizioni
-							 */
+						/*
+						 * aggiorno le partizioni
+						 */
 							
-							if (!commandLine.hasOption(commandLineOptions.local.getOpt)) {
-								val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
-										hiveContext.sql("MSCK REPAIR TABLE au.fm_quarti")
-										hiveContext.sql("MSCK REPAIR TABLE au.report_ingestione")
-										log.info("***** aggiornamento partizioni OK")
-							}
+						if (!commandLine.hasOption(commandLineOptions.local.getOpt)) {
+							val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+							hiveContext.sql("MSCK REPAIR TABLE au.fm_quarti")
+							hiveContext.sql("MSCK REPAIR TABLE au.report_ingestione")
+							log.info("***** aggiornamento partizioni OK")
+						}
 							
       				
-            }catch{
-              case ex: FileNotFoundException => ex.printStackTrace()
-          		case e: Exception =>  e.printStackTrace()
-          	}finally{
-          	  sc.stop()
-          	}
-
+          }catch{
+            case ex: FileNotFoundException => ex.printStackTrace()
+            case e: Exception =>  e.printStackTrace()
+          }finally{
+          	 sc.stop()
+          }
 
 					log.info(s"***** Fine processo ${argsObjMaster.appName} *****")
       }
 
-			 def delete(f:File):Boolean = {
-					 if (f.isDirectory()) {
-						 for (c <- f.listFiles())
-							 delete(c);
-					 }
-					 if (!f.delete()){
-						 false
-					 }else{
-						 true
-					 }
-			 } 
+		def delete(f:File):Boolean = {
+			if (f.isDirectory()) {
+			 for (c <- f.listFiles())
+				 delete(c);
+			}
+			if (!f.delete()){
+			 false
+			}else{
+			 true
+			}
+		} 
 			 
     def leggiPathXml(f:File): Array[File] = {
       val ret = f.listFiles()
@@ -858,33 +851,28 @@ def main(args: Array[String]) {
       }
 		}
     
-    	def scansionaUDD(injectionPath:String) : List[String] = {
+    def scansionaUDD(injectionPath:String) : List[String] = {
 			val abW2 = new ArrayBuffer[(String)]()
 
-					//cartella principale 
-					for (xmlPrincipaleDir <- new File(injectionPath).listFiles()) {
-						if(xmlPrincipaleDir.exists() && xmlPrincipaleDir.isDirectory() && xmlPrincipaleDir.listFiles().length > 0){
-							//cartella del distributore
-							val pivaDistrDir = xmlPrincipaleDir.getPath()
+			//cartella principale 
+			for (xmlPrincipaleDir <- new File(injectionPath).listFiles()) {
+				if(xmlPrincipaleDir.exists() && xmlPrincipaleDir.isDirectory() && xmlPrincipaleDir.listFiles().length > 0){
+					//cartella del distributore
+					val pivaDistrDir = xmlPrincipaleDir.getPath()
 
-							try{
-									for (xmlUddDir <- new File(pivaDistrDir + File.separator + "DISTRIBUTORE").listFiles()) {
-										if( xmlUddDir.exists() && xmlUddDir.isDirectory() &&  xmlUddDir.listFiles().length > 0){
-											//cartella del sotteso
-											val uddDir = xmlUddDir.getPath()
-
-//											log.info(uddDir)
-											abW2.+=(uddDir)
-										}
-									}
-							
-							}catch{
-          		case e: Exception =>  e.printStackTrace()
-          	}
-							
-						}
-					}
+					try{
+							for (xmlUddDir <- new File(pivaDistrDir + File.separator + "DISTRIBUTORE").listFiles()) {
+								if( xmlUddDir.exists() && xmlUddDir.isDirectory() &&  xmlUddDir.listFiles().length > 0){
+									//cartella del sotteso
+									val uddDir = xmlUddDir.getPath()
+									abW2.+=(uddDir)
+								}
+							}
+					}catch{
+        		case e: Exception =>  e.printStackTrace()
+        	}
+				}
+			}
 			abW2.toList
-	}
-			 
+	  }
 }

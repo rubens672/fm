@@ -16,87 +16,84 @@ import it.au.misure.util.LoggingSupport
  * messaggi di aiuto che dettagliano le opzioni disponibili. 
  */
 object Tool extends LoggingSupport {
-  
-  val commonsCliUtils = new CommonsCliUtils()
-	val commandLineOptions = new CommandLineOptions()
-  
-	def main(args: Array[String]) {
-      
-		/*
-		 *  parse command line
-		 */
-	 
-		val commandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions)
 
-		/*
-		 * azioni di utilita'
-		 */
-		utility(commandLine)
-		
-		/*
-		 * run the chosen command
-		 */
-		try{
-		  runChosenCommand(commandLine,args)
-		}catch{
-		  case e: Exception => {
-		    log.error(e.getMessage, e)
-		    e.printStackTrace()
-		  }
-		  System.exit(1)
-		}
-		
+	val commonsCliUtils = new CommonsCliUtils()
+	val commandLineOptions = new CommandLineOptions()
+
+	def main(args: Array[String]) {
+  		/*
+  		 *  parse command line
+  		 */
+  		val commandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions);
+  
+  		/*
+  		 * azioni di utilita'
+  		 */
+  		utility(commandLine);
+  
+  		/*
+  		 * run the chosen command
+  		 */
+  		try{
+  			runChosenCommand(commandLine,args)
+  		}catch{
+    		case e: Exception => {
+    			log.error(e.getMessage, e)
+    			e.printStackTrace()
+    		}
+    		System.exit(1)
+  		}
 	}
 
-  /**
-   * Stampa un messaggio di errore e chiude il programma.
-   * @param message messaggio d'errore.
-   */
+	/**
+	 * Stampa un messaggio di errore e chiude il programma.
+	 * @param message messaggio d'errore.
+	 */
 	def printErrorAndExit(message: String): Unit = {
 			log.info(message)
 			log.info("Digita --help per informazioni")
 			System.exit(0)
 	}
 
-	 /**
-   * Stampa a video la versione del processo e chiude il programma.
-   */
+	/**
+	 * Stampa a video la versione del processo e chiude il programma.
+	 */
 	def printVersionAndExit(): Unit = {
 			log.info(s" Tool - Versione 1.0.5-SNAPSHOT") 
 			System.exit(0)
 	}
 
-	 /**
-   * Stampa a video le opzioni disponibili del processo e chiude il programma.
-   */
+	/**
+	 * Stampa a video le opzioni disponibili del processo e chiude il programma.
+	 */
 	def printHelpAndExit(): Unit = {
 			commonsCliUtils.printHelpForOptions(commandLineOptions.getOptions)
 			System.exit(0)
 	}
 
-  /**
-   * Punto di ingresso per le varie funzionalità del processo in base all'argomento passato da riga di comando.
+	/**
+	 * Punto di ingresso per le varie funzionalità del processo in base all'argomento passato da riga di comando.
 	 * @param commandLine oggetto che gestisce le varie opzione previste.
 	 * @param args argomenti passati da riga di comando
-   */
+	 */
 	def runChosenCommand(commandLine: CommandLine, args: Array[String]): Unit = {
-	    val inizio = System.currentTimeMillis() / 1000
+			val inizio = System.currentTimeMillis() / 1000
 
 			if (commandLine.hasOption(commandLineOptions.decomprime2G.getOpt)) {
-			  decomprime2G(commandLine, args)
-				
+				decomprime2G(commandLine, args)
+
 			} else if (commandLine.hasOption(commandLineOptions.injection.getOpt)) {
-			  injection(commandLine, args)
-			  
+				injection(commandLine, args)
+
 			} else if (commandLine.hasOption(commandLineOptions.aggregatiOrari.getOpt)) {
 				it.au.misure.aggregazioni.AggregazioneMisureOrarieValidazioni.main(args)
-				
+
 			} else if (commandLine.hasOption(commandLineOptions.aggregatiAM.getOpt)) {
 				it.au.misure.aggregazioni.AmMisureMaster.main(args)
-				
+
 			}  else if (commandLine.hasOption(commandLineOptions.aggiornamento.getOpt)) {
 				injection(commandLine, args)
-				
+
 			} else if (commandLine.hasOption(commandLineOptions.creaFM.getOpt)) {
 				it.au.misure.util.CreaFlusso.main(args)
 
@@ -105,67 +102,66 @@ object Tool extends LoggingSupport {
 				printHelpAndExit()
 				System.exit(1)
 			}
-			
+
 			val fine = System.currentTimeMillis() / 1000
 			log.info(s"***** tempo esecuzione ${((fine - inizio) / 60)}:${((fine - inizio) % 60)}" )
 	}
-	
+
 	/**
 	 * azioni di utilita'
 	 * @param commandLine oggetto che gestisce le varie opzione previste.
 	 */
 	def utility(commandLine:CommandLine) = {
-	  // handle version & help
-		if (commandLine.hasOption(commandLineOptions.version.getOpt)) {
-			printVersionAndExit()
-		} else if (commandLine.hasOption(commandLineOptions.help.getOpt)) {
-			printHelpAndExit()
-		} 
+			// handle version & help
+			if (commandLine.hasOption(commandLineOptions.version.getOpt)) {
+				printVersionAndExit()
+			} else if (commandLine.hasOption(commandLineOptions.help.getOpt)) {
+				printHelpAndExit()
+			} 
 
-		// enable debug if verbose was specified
-		if (commandLine.hasOption(commandLineOptions.verbose.getOpt)) {
-			LogManager.getRootLogger.setLevel(Level.DEBUG)
-		}
+			// enable debug if verbose was specified
+			if (commandLine.hasOption(commandLineOptions.verbose.getOpt)) {
+				LogManager.getRootLogger.setLevel(Level.DEBUG)
+			}
 	}
-	
+
 	/**
 	 * Funzione per la decompressione dei file di misura.
 	 * @param commandLine oggetto che gestisce le varie opzione previste.
 	 * @param args argomenti passati da riga di comando
 	 */
 	def decomprime2G(commandLine:CommandLine, args: Array[String]) = {
-	    val tipoFile:String = if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)) {
-			    "1G"
-			  }else if (commandLine.hasOption(commandLineOptions.injection2G.getOpt)) {
-			    "2G"
-			  }else{
-			    val msg = "Nessun tipo di file (1g/2g) specificato! Usa --help per vedere l'uso."
-			    log.info(msg)
-			    printHelpAndExit()
-			    System.exit(1)
-			    msg
-			  }
-			  log.info("CommandLineOptions.decomprime " + tipoFile)
-				it.au.misure.ingestione.Decomprime12G.main(args)
+			val tipoFile:String = if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)) {
+				"1G"
+			}else if (commandLine.hasOption(commandLineOptions.injection2G.getOpt)) {
+				"2G"
+			}else{
+				val msg = "Nessun tipo di file (1g/2g) specificato! Usa --help per vedere l'uso."
+				log.info(msg)
+				printHelpAndExit()
+				System.exit(1)
+				msg
+			}
+	    log.info("CommandLineOptions.decomprime " + tipoFile)
+	    it.au.misure.ingestione.Decomprime12G.main(args)
 	}
-	
-		/**
+
+	/**
 	 * Funzione per l'ingestione dei file di misura.
 	 * @param commandLine oggetto che gestisce le varie opzione previste.
 	 * @param args argomenti passati da riga di comando
 	 */
 	def injection(commandLine:CommandLine, args: Array[String]) = {
-	  if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)) {
-			    log.info("CommandLineOptions.injection1G")
-			  }else if (commandLine.hasOption(commandLineOptions.injection2G.getOpt)) {
-			    log.info("CommandLineOptions.injection2G")
-			  }else{
-			    log.info("Nessun tipo di file (1g/2g) specificato! Usa --help per vedere l'uso.")
-			    printHelpAndExit()
-				  System.exit(1)
-			  }
-				it.au.misure.ingestione.Injection.main(args)
-				
+			if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)) {
+				log.info("CommandLineOptions.injection1G")
+			}else if (commandLine.hasOption(commandLineOptions.injection2G.getOpt)) {
+				log.info("CommandLineOptions.injection2G")
+			}else{
+				log.info("Nessun tipo di file (1g/2g) specificato! Usa --help per vedere l'uso.")
+				printHelpAndExit()
+				System.exit(1)
+			}
+			it.au.misure.ingestione.Injection.main(args)
 	}
 
 	/*
@@ -173,42 +169,38 @@ object Tool extends LoggingSupport {
 	 * yarn-client
 	 */
 	def execute(commandLine: CommandLine, mainClass: String): Unit = {
-	  
-	   val master:String = if (commandLine.hasOption(commandLineOptions.local.getOpt)) {
+		val master:String = if (commandLine.hasOption(commandLineOptions.local.getOpt)) {
 				"local[*]" 
 			}else{
-			  "yarn-client"
+				"yarn-client"
 			}
-	  
-			val spark = new SparkLauncher()
-					.setAppName(" Inserimento Misure Quarti Tool")
-					.setAppResource(SparkLauncher.SPARK_MASTER)
-					.setMainClass("it.au.misure.util.Decomprime2G")
-					.setMaster(master)
-					
-					for(e <- commandLine.getOptions) {
-					  if(e.getValue == null){
-					    spark.addAppArgs("--" + e.getLongOpt)
-					  }else{
-					     spark.addAppArgs("--" + e.getLongOpt, e.getValue)
-					  }
-					}
-					
-					println("startApplication start")
-					val handle  = spark.startApplication()
 
-					val countDownLatch = new CountDownLatch(1);
+	  val spark = new SparkLauncher()
+			.setAppName(" Inserimento Misure Quarti Tool")
+			.setAppResource(SparkLauncher.SPARK_MASTER)
+			.setMainClass("it.au.misure.util.Decomprime2G")
+			.setMaster(master)
 
-			val listener = new SparkAppHandle.Listener {
-				override def infoChanged(handle: SparkAppHandle): Unit = {}
-				override def stateChanged(handle: SparkAppHandle): Unit = {
+	  for(e <- commandLine.getOptions) {
+		  if(e.getValue == null){
+			  spark.addAppArgs("--" + e.getLongOpt)
+		  }else{
+			  spark.addAppArgs("--" + e.getLongOpt, e.getValue)
+		  }
+	  }
 
-						if (handle.getState().isFinal()) {
-							countDownLatch.countDown();
-						}
-
+  	println("startApplication start")
+  	val handle  = spark.startApplication()
+  
+  	val countDownLatch = new CountDownLatch(1);
+  
+  	val listener = new SparkAppHandle.Listener {
+		override def infoChanged(handle: SparkAppHandle): Unit = {}
+		override def stateChanged(handle: SparkAppHandle): Unit = {
+				if (handle.getState().isFinal()) {
+					countDownLatch.countDown();
 				}
-			}
+  		}
+  	}
 	}
-
 }

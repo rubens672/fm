@@ -37,7 +37,6 @@ object Decomprime12G extends LoggingSupport {
  */
 	def main(args: Array[String]) {
 	 
-
 		val commonsCliUtils = new CommonsCliUtils()
 		val commandLineOptions = new CommandLineOptions()
 		val commandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions)
@@ -46,10 +45,10 @@ object Decomprime12G extends LoggingSupport {
 		println("***** Inizio processo Decompressione Misure Quarti *****")
 
 		val conf = new SparkConf()
-		.setAppName( argsObjMaster.appName )
-		.set("spark.shuffle.service.enabled", "false")
-		.set("spark.dynamicAllocation.enabled", "false")
-		.setMaster( argsObjMaster.master )
+  		.setAppName( argsObjMaster.appName )
+  		.set("spark.shuffle.service.enabled", "false")
+  		.set("spark.dynamicAllocation.enabled", "false")
+  		.setMaster( argsObjMaster.master )
 
 		val sc = new SparkContext(conf)
 		sc.hadoopConfiguration.set("mapreduce.input.fileinputformat.input.dir.recursive","true")
@@ -58,19 +57,19 @@ object Decomprime12G extends LoggingSupport {
 		val minPartitions =  sc.getConf.get("spark.fm.min.partitions")
 		
 		val sqlCtx = new SQLContext(sc)
-			sqlCtx.setConf("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version","2")
-			sqlCtx.setConf("spark.sql.parquet.compression.codec","uncompressed")
-			sqlCtx.setConf("spark.sql.parquet.binaryAsString", "true")
-			sqlCtx.setConf("spark.sql.parquet.output.committer.class", "org.apache.spark.sql.parquet.ParquetOutputCommitter")
-			sqlCtx.setConf("hive.exec.dynamic.partition","true")
-			sqlCtx.setConf("hive.exec.dynamic.partition.mode","nonstrict")
+  	sqlCtx.setConf("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version","2")
+  	sqlCtx.setConf("spark.sql.parquet.compression.codec","uncompressed")
+  	sqlCtx.setConf("spark.sql.parquet.binaryAsString", "true")
+  	sqlCtx.setConf("spark.sql.parquet.output.committer.class", "org.apache.spark.sql.parquet.ParquetOutputCommitter")
+  	sqlCtx.setConf("hive.exec.dynamic.partition","true")
+  	sqlCtx.setConf("hive.exec.dynamic.partition.mode","nonstrict")
 		
 		try{
 
-		val slash = sc.getConf.get("spark.fm.slash")
-		val minPartitions =  sc.getConf.get("spark.fm.min.partitions").toInt
-		val injectionTmp:String = argsObjMaster.injectionTmp
-		val rootDir:String = argsObjMaster.rootDir
+    		val slash = sc.getConf.get("spark.fm.slash")
+    		val minPartitions =  sc.getConf.get("spark.fm.min.partitions").toInt
+    		val injectionTmp:String = argsObjMaster.injectionTmp
+    		val rootDir:String = argsObjMaster.rootDir
 
 				val injection:String = if (commandLine.hasOption(commandLineOptions.injection1G.getOpt)) {
 					sc.getConf.get("spark.fm.injection1G").concat(rootDir).concat(File.separator)
@@ -108,6 +107,7 @@ object Decomprime12G extends LoggingSupport {
 				
 
 				val tmpDirClean = new File(s"${injectionTmp}${File.separator}${rootDir}")
+				
 				// /mnt/isilonshare1/TMP_1G_collaudo0720/Test_clouderaShare
 				if(tmpDirClean.exists() && tmpDirClean.isDirectory() && tmpDirClean.listFiles().length > 0){
 				  val tmpDirList = tmpDirClean.listFiles().map(xml => xml.getPath).toList
@@ -119,49 +119,28 @@ object Decomprime12G extends LoggingSupport {
 				println("*** controllo della la cartella temporanea OK")
 
 				
-					val elencoUDD = scansionaUDD(injection).toSeq
+				val elencoUDD = scansionaUDD(injection).toSeq
 					
-					val rddUDD = sc.parallelize(elencoUDD).setName("Scansiona alberatura")
-					rddUDD.cache()
-					println("*** scansiona alberatura UDD OK ")
+				val rddUDD = sc.parallelize(elencoUDD).setName("Scansiona alberatura")
+				rddUDD.cache()
+				println("*** scansiona alberatura UDD OK ")
 					
+				rddUDD.foreach{uddDir => 
+  				val ret = leggiAlbertatura(uddDir, giorniList, args, commonsCliUtils, commandLineOptions)
+  				ret.foreach(filePath => decomprimiAlberatura(filePath, rootDir, injectionTmp))
+				}
 					
-					
-				  
-//					val parts = rddUDD.mapPartitions{partition => 
-//					  val ret = partition.map{uddDir =>
-////					    println(s"${uddDir}")
-//					    val rett = leggiAlbertatura(uddDir, giorniList, args, commonsCliUtils, commandLineOptions)
-//					    rett.foreach(filePath => decomprimiAlberatura(filePath, rootDir, injectionTmp))
-//					    uddDir
-//					  }
-//				    ret
-//				  }.collect()
-				
-				
-					
-					/* soluzione 1 */
-					rddUDD.foreach{uddDir => 
-					    val ret = leggiAlbertatura(uddDir, giorniList, args, commonsCliUtils, commandLineOptions)
-					    ret.foreach(filePath => decomprimiAlberatura(filePath, rootDir, injectionTmp))
-				  }
-					
-					
-					println("*** decomprimi alberatura OK")
-					
-					
-          }catch{
-          		case e: Exception =>  {
-          		  log.error(e.getMessage, e)
-          		  throw new Exception(e)
-          		}
-          }finally{
-          	 sc.stop()
-          }
-          
+				println("*** decomprimi alberatura OK")
+		}catch{
+  		case e: Exception =>  {
+  			log.error(e.getMessage, e)
+  			throw new Exception(e)
+  		}
+		}finally{
+			sc.stop()
+		}
 
-					println("***** Fine processo Decompressione Misure Quarti *****")
-					
+		println("***** Fine processo Decompressione Misure Quarti *****")
 	}
 	
 	def pri(udd:String):String = {
@@ -183,7 +162,6 @@ object Decomprime12G extends LoggingSupport {
     }else{
       true
     }
-   
 }
 	
 	def scansionaTmpDirPath(tmpDirPath:String, slash:String) : List[String] = {
@@ -222,27 +200,21 @@ object Decomprime12G extends LoggingSupport {
  * @param injectionTmp cartella temporanea di destinazione dei file di misura decompressi.
  */
 	def decomprimiAlberatura(file:String, rootDir:String, injectionTmp:String) : String = {
-//	  println(s"decomprimiAlberatura file ${file}")
-	  try{
-	    val zipArchive = new ZipArchive()
-//	    println(s"file: ${file}")
-	  val dirPath = file.substring(file.lastIndexOf(rootDir), file.lastIndexOf(File.separator))
-							val tmpDirPath = injectionTmp.concat(File.separator).concat(dirPath)
-//										  println(s"file: ${file}")
-//										  println(s"dirPath: ${dirPath}")
-//										  println(s"tmpDirPath: ${tmpDirPath}")
-//							println( s"file: ${file} - tmpDirPath: ${tmpDirPath}" )
-							val tmpDir = new File(tmpDirPath)
-							tmpDir.mkdirs()
-							zipArchive.unZip(file, tmpDirPath)
-							
-							tmpDirPath
-								 } catch {
-				case e: Exception => {
-					e.printStackTrace()
-					throw new Exception(e)
-				}
-	}
+			try{
+				val zipArchive = new ZipArchive()
+				val dirPath = file.substring(file.lastIndexOf(rootDir), file.lastIndexOf(File.separator))
+				val tmpDirPath = injectionTmp.concat(File.separator).concat(dirPath)
+				val tmpDir = new File(tmpDirPath)
+				tmpDir.mkdirs()
+				zipArchive.unZip(file, tmpDirPath)
+
+				tmpDirPath
+			} catch {
+  			  case e: Exception => {
+    				e.printStackTrace()
+    				throw new Exception(e)
+  			  }
+			}
 	}
 	
 /**
@@ -255,16 +227,17 @@ object Decomprime12G extends LoggingSupport {
  */
 	def leggiAlbertatura(uddDir:String, giorniList:List[String], args: Array[String], commonsCliUtils:CommonsCliUtils, commandLineOptions:CommandLineOptions) : List[String] = {
 	  try{
-	  val commandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions)
-		val argsObjMaster = commonsCliUtils.getArgs(commandLine)
-	  val isAggiorna:Boolean = commandLine.hasOption(commandLineOptions.aggiornamento.getOpt)
-		val pdo_rfo:String = argsObjMaster.PdoRfo
-		val isGiornoSingolo:Boolean = if(commandLine.hasOption(commandLineOptions.giorno.getOpt)){
-			true
-		}else{
-			false
-		}
-	  val ret = giorniList.map{ giornoX => 
+  	  val commandLine = commonsCliUtils.parseArgsList(args, commandLineOptions.getOptions)
+  		val argsObjMaster = commonsCliUtils.getArgs(commandLine)
+  	  val isAggiorna:Boolean = commandLine.hasOption(commandLineOptions.aggiornamento.getOpt)
+  		val pdo_rfo:String = argsObjMaster.PdoRfo
+  		val isGiornoSingolo:Boolean = if(commandLine.hasOption(commandLineOptions.giorno.getOpt)){
+  			true
+  		}else{
+  			false
+  		}
+  	  
+  	  val ret = giorniList.map{ giornoX => 
 
 						/* singolo giorno */
 						val argsObj = if(isGiornoSingolo){
@@ -278,9 +251,7 @@ object Decomprime12G extends LoggingSupport {
 						val giorno:String = argsObj.giorno
 						val nomeFile:String = argsObj.nomeFile
 						val nomeFile2G:String = argsObj.nomeFile2G
-//						println(s"*** anno: ${anno} - mese: ${mese} - ${giorno} ")
 						val xmlDirPath = uddDir + File.separator + anno + File.separator + mese + giorno
-//						println("*** xmlDirPath: " + xmlDirPath)
 
 						val annoMeseGiornoDir = anno + mese + giorno
 						val xmlDir = new File( xmlDirPath )
@@ -339,14 +310,14 @@ object Decomprime12G extends LoggingSupport {
 						  List( )
 						}
 						abW3
-	    }
-  	  val retList = ret.flatMap(f => f).map(_.getPath)
-  	  retList
-  	  	 } catch {
-  				case e: Exception => {
-  					e.printStackTrace()
-  					throw new Exception(e)
-  				}
+    	    }
+      	  val retList = ret.flatMap(f => f).map(_.getPath)
+      	  retList
+  	  	} catch {
+  				 case e: Exception => {
+  					 e.printStackTrace()
+  					 throw new Exception(e)
+  			}
   	}
 	}
 	

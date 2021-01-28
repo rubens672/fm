@@ -29,12 +29,11 @@ class CommonsCliUtils  extends Serializable{
    * @return oggetto che gestisce le varie opzione previste.
    */
 	def parseArgsList(args: Array[String], options: Options): CommandLine = {
-    
 			Try {
 				new DefaultParser().parse(options, args)
 			} match {
-			case Success(settings) => settings
-			case Failure(e) => printHelpForOptions(options); throw e
+  			case Success(settings) => settings
+  			case Failure(e) => printHelpForOptions(options); throw e
 			}
 	}
 
@@ -231,81 +230,81 @@ def getArgsAggregati(commandLine: CommandLine): Args = {
 		 val mese:String = "0" + Integer.toString(cal.get(Calendar.MONTH) + 1) takeRight 2
 		 val giorno:String = "0" + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) takeRight 2
      
-						val pdo_rfo:String = if (commandLine.hasOption(commandLineOptions.pdo.getOpt)){
-							"PDO"
-						}else if (commandLine.hasOption(commandLineOptions.rfo.getOpt)){
-							"RFO"
-						}else {
-							"PDO"
-						}
+		 val pdo_rfo:String = if (commandLine.hasOption(commandLineOptions.pdo.getOpt)){
+			 "PDO"
+		 }else if (commandLine.hasOption(commandLineOptions.rfo.getOpt)){
+			 "RFO"
+		 }else {
+			 "PDO"
+		 }
 
 
-						val appName:String = if(commandLine.hasOption(commandLineOptions.injection.getOpt)){
-  						  if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
-  							  "Injection Misure Quarti 2G " + pdo_rfo
-  						  }else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
-  							  "Injection Misure Quarti 1G " + pdo_rfo
-  						  }else{
-  						    "Injection Misure Quarti"
-  						  }
-  						}else if(commandLine.hasOption(commandLineOptions.decomprime2G.getOpt)){
-  						  if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
-  							  "Decompressione Misure Quarti 2G " + pdo_rfo
-  						  }else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
-  							  " Decompressione Misure Quarti 1G " + pdo_rfo
-  						  }else{
-  						    "Decompressione Misure Quarti " + pdo_rfo
-  						  }
-  						}else if(commandLine.hasOption(commandLineOptions.aggregatiOrari.getOpt)){
-  							"Aggregazione Misure Orarie"
-  						}else if(commandLine.hasOption(commandLineOptions.aggregatiAM.getOpt)){
-  							"Aggregazione Am Misure Master"
-  						}else if(commandLine.hasOption(commandLineOptions.aggiornamento.getOpt)){
-  							"Aggiornamenti"
-  						}else if(commandLine.hasOption(commandLineOptions.test.getOpt)){
-  							"Test"
-  						}else{
-  							"X"
-  						}
+		 val appName:String = if(commandLine.hasOption(commandLineOptions.injection.getOpt)){
+			 if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
+				 "Injection Misure Quarti 2G " + pdo_rfo
+			 }else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
+				 "Injection Misure Quarti 1G " + pdo_rfo
+			 }else{
+				 "Injection Misure Quarti"
+			 }
+		 }else if(commandLine.hasOption(commandLineOptions.decomprime2G.getOpt)){
+			 if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
+				 "Decompressione Misure Quarti 2G " + pdo_rfo
+			 }else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
+				 " Decompressione Misure Quarti 1G " + pdo_rfo
+			 }else{
+				 "Decompressione Misure Quarti " + pdo_rfo
+			 }
+		 }else if(commandLine.hasOption(commandLineOptions.aggregatiOrari.getOpt)){
+			 "Aggregazione Misure Orarie"
+		 }else if(commandLine.hasOption(commandLineOptions.aggregatiAM.getOpt)){
+			 "Aggregazione Am Misure Master"
+		 }else if(commandLine.hasOption(commandLineOptions.aggiornamento.getOpt)){
+			 "Aggiornamenti"
+		 }else if(commandLine.hasOption(commandLineOptions.test.getOpt)){
+			 "Test"
+		 }else{
+			 "X"
+		 };
 						
-						/*
-						 * cartella temporanea dove vengono decompressi i file di misura zippati
-						 */
-						val tmpDir:String = if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
-							prop.getProperty("spark.app.directory.temporanea.2G") // /mnt/isilonshare1/TMP_2G
-						}else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
-							prop.getProperty("spark.app.directory.temporanea.1G") // /mnt/isilonshare1/TMP_1G_collaudo0720
-						}else{
-						  ""
-						}
+		 /*
+		  * cartella temporanea dove vengono decompressi i file di misura zippati
+		  */
+		 val tmpDir:String = if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
+			 prop.getProperty("spark.app.directory.temporanea.2G") // /mnt/isilonshare1/TMP_2G
+		 }else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
+			 prop.getProperty("spark.app.directory.temporanea.1G") // /mnt/isilonshare1/TMP_1G_collaudo0720
+		 }else{
+			 ""
+		 }
 						
-						/*
-						 * cartella root dei file di misura zippati
-						 */
-						val rootDir:String = if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
-							prop.getProperty("spark.app.directory.root.2G") // isilonshare
-						}else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
-							prop.getProperty("spark.app.directory.root.1G") // Test_clouderaShare
-						}else{
-						  ""
-						}
-						 
-						
-							val logLevel:String = if (commandLine.hasOption(commandLineOptions.verbose.getOpt)) {
-							  LogManager.getRootLogger.setLevel(Level.DEBUG)
-								"DEBUG"
-							}else{
-							  LogManager.getRootLogger.setLevel(Level.ERROR)
-								"ERROR"
-							}
-							
-							val master:String = if (commandLine.hasOption(commandLineOptions.local.getOpt)) {
-								"local[*]"
-							}else{
-								"yarn-client"
-							} 
+		 /*
+		  * cartella root dei file di misura zippati
+		  */
+		 val rootDir:String = if(commandLine.hasOption(commandLineOptions.injection2G.getOpt)){
+			 prop.getProperty("spark.app.directory.root.2G") // isilonshare
+		 }else if(commandLine.hasOption(commandLineOptions.injection1G.getOpt)){
+			 prop.getProperty("spark.app.directory.root.1G") // Test_clouderaShare
+		 }else{
+			 ""
+		 }
 
-							Args(anno, mese, giorno, pdo_rfo, appName, logLevel, tmpDir, rootDir,  master, nomeFile, nomeFile2G, null, null, annomesegiornodir)
+
+		 val logLevel:String = if (commandLine.hasOption(commandLineOptions.verbose.getOpt)) {
+			 LogManager.getRootLogger.setLevel(Level.DEBUG)
+			 "DEBUG"
+		 }else{
+			 LogManager.getRootLogger.setLevel(Level.ERROR)
+			 "ERROR"
+		 }
+
+		 val master:String = if (commandLine.hasOption(commandLineOptions.local.getOpt)) {
+			 "local[*]"
+		 }else{
+			 "yarn-client"
+		 } 
+
+		 Args(anno, mese, giorno, pdo_rfo, appName, logLevel, tmpDir, rootDir,  master, nomeFile, nomeFile2G, null, null, annomesegiornodir)
 	}
 	
 	def getGiorni(mese:String, giorno:String) : List[String] = {
@@ -342,7 +341,6 @@ def getArgsAggregati(commandLine: CommandLine): Args = {
 		listaGiorni
   }
 
-case class Args(anno:String, mese:String, giorno:String, PdoRfo:String, appName:String, logLevel:String, injectionTmp:String, rootDir:String, master:String, nomeFile:String, nomeFile2G:String, meseAggr:String, annoAggr:String, annomesegiornodir:Int)
-
+  case class Args(anno:String, mese:String, giorno:String, PdoRfo:String, appName:String, logLevel:String, injectionTmp:String, rootDir:String, master:String, nomeFile:String, nomeFile2G:String, meseAggr:String, annoAggr:String, annomesegiornodir:Int)
 
 }

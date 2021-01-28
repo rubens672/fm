@@ -83,7 +83,7 @@ class CreateProperties {
     prop
   }
   
-    /**
+  /**
    * Contiene le proprietà in formato chiave valore del file query.properties
    * @return Properties 
    */
@@ -97,11 +97,11 @@ class CreateProperties {
     prop
   }
   
-  /**
-   * Contiene le proprietà in formato chiave valore del file xsd.properties
-   * @return Properties 
-   */
-    def xsdProp:Properties = {
+   /**
+    * Contiene le proprietà in formato chiave valore del file xsd.properties
+    * @return Properties 
+    */
+  def xsdProp:Properties = {
     val hdfsConf = new Configuration()
     val fs = FileSystem.get(hdfsConf)
     
