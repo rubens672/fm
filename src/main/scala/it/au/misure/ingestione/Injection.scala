@@ -287,7 +287,7 @@ object Injection extends LoggingSupport {
     							}
     													
 
-      							//misure stimate
+      					//misure stimate
       					val er = (dp \\ "Curva" \ "Er")
   							val ir = er.theSeq
   
@@ -459,9 +459,9 @@ object Injection extends LoggingSupport {
   					dpRes.toList
 
 				} catch {
-  				case e: Exception => {
-  					e.printStackTrace()
-  					Nil
+  				  case e: Exception => {
+  					  e.printStackTrace()
+  					  Nil
   				}
 				}
       }
@@ -646,7 +646,7 @@ object Injection extends LoggingSupport {
 		}catch{
   		case e: Exception => 
   		  e.printStackTrace()
-  		(false, (rdd._1, e.getMessage() ),"001")
+  		  (false, (rdd._1, e.getMessage() ),"001")
 		}
   }
 

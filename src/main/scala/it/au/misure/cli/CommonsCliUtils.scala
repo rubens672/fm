@@ -43,8 +43,8 @@ class CommonsCliUtils  extends Serializable{
    */
 	def printHelpForOptions(options: Options) {
 		val f = new HelpFormatter()
-				f.setWidth(100)
-				f.printHelp("fm", "", options, "", true)
+		f.setWidth(100)
+		f.printHelp("fm", "", options, "", true)
 	}
 
 	/**
@@ -63,7 +63,7 @@ class CommonsCliUtils  extends Serializable{
 	     null
 	   }
 	   val ret:List[String] = getGiorni(mese, giorni)
-	  ret
+	   ret
 	}
 
 /**
@@ -74,10 +74,10 @@ class CommonsCliUtils  extends Serializable{
  * @return Args argomenti.
  */
 def getArgsRange(commandLine: CommandLine, commandLineOptions:CommandLineOptions, giornoIn:String): Args = {
-	   val timeZone = prop.getProperty("spark.app.time_zone")
-	   val cal = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
-	   val calXml = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
-	   val calGhigliottina = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
+	  val timeZone = prop.getProperty("spark.app.time_zone")
+	  val cal = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
+	  val calXml = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
+	  val calGhigliottina = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
 	   
 	  try{
 	   if (commandLine.hasOption(commandLineOptions.anno.getOpt)) {
@@ -98,23 +98,23 @@ def getArgsRange(commandLine: CommandLine, commandLineOptions:CommandLineOptions
 	  }
 
 	   
-	   val annomesegiornodir:Int =  ("" + calGhigliottina.get(Calendar.YEAR) + ("0" + (calGhigliottina.get(Calendar.MONTH) + 1) takeRight 2 ) + 16).toInt
+	  val annomesegiornodir:Int =  ("" + calGhigliottina.get(Calendar.YEAR) + ("0" + (calGhigliottina.get(Calendar.MONTH) + 1) takeRight 2 ) + 16).toInt
 
-	   val nomeFile = {
-	     "" + calXml.get(Calendar.YEAR) + ("0" + (calXml.get(Calendar.MONTH) + 1) takeRight 2 ) + "01"
-	   }
+	  val nomeFile = {
+	    "" + calXml.get(Calendar.YEAR) + ("0" + (calXml.get(Calendar.MONTH) + 1) takeRight 2 ) + "01"
+	  }
 	   
-	   val nomeFile2G = {
-	     //prendo solo i file del giorno precedente
-	     "" + calXml.get(Calendar.YEAR) + ("0" + (calXml.get(Calendar.MONTH) + 1) takeRight 2 ) + ("0" + calXml.get(Calendar.DAY_OF_MONTH) takeRight 2 )
-	   }
+	  val nomeFile2G = {
+	    //prendo solo i file del giorno precedente
+	    "" + calXml.get(Calendar.YEAR) + ("0" + (calXml.get(Calendar.MONTH) + 1) takeRight 2 ) + ("0" + calXml.get(Calendar.DAY_OF_MONTH) takeRight 2 )
+	  }
 	   
 
-		 val anno:String = Integer.toString(cal.get(Calendar.YEAR))
-		 val mese:String = "0" + Integer.toString(cal.get(Calendar.MONTH) + 1) takeRight 2
-		 val giorno:String = "0" + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) takeRight 2
+		val anno:String = Integer.toString(cal.get(Calendar.YEAR))
+		val mese:String = "0" + Integer.toString(cal.get(Calendar.MONTH) + 1) takeRight 2
+		val giorno:String = "0" + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) takeRight 2
      
-		 Args(anno, mese, giorno, null, null, null, null, null,  null, nomeFile, nomeFile2G, null, null, annomesegiornodir)
+		Args(anno, mese, giorno, null, null, null, null, null,  null, nomeFile, nomeFile2G, null, null, annomesegiornodir)
 }
 
 /**
@@ -126,11 +126,11 @@ def getArgsAggregati(commandLine: CommandLine): Args = {
   
     val commandLineOptions = new CommandLineOptions()
     
-	   val timeZone = prop.getProperty("spark.app.time_zone")
-	   val cal = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
-	   val calXml = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
+	  val timeZone = prop.getProperty("spark.app.time_zone")
+	  val cal = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
+	  val calXml = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
 //	   val calAggr = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
-	   val calGhigliottina = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
+	  val calGhigliottina = Calendar.getInstance(TimeZone.getTimeZone( timeZone ));
 	   
 	  try{
 	   if (commandLine.hasOption(commandLineOptions.anno.getOpt)) {
@@ -149,35 +149,35 @@ def getArgsAggregati(commandLine: CommandLine): Args = {
 	  }
 
 	   
-	    val annomesegiornodir:Int = if (commandLine.hasOption(commandLineOptions.annomesegiornodir.getOpt)) {
-	     commandLine.getOptionValue(commandLineOptions.annomesegiornodir.getOpt).toInt
-	   }else{
+	  val annomesegiornodir:Int = if (commandLine.hasOption(commandLineOptions.annomesegiornodir.getOpt)) {
+	    commandLine.getOptionValue(commandLineOptions.annomesegiornodir.getOpt).toInt
+	  }else{
 	     ("" + calGhigliottina.get(Calendar.YEAR) + ("0" + (calGhigliottina.get(Calendar.MONTH) + 1) takeRight 2 ) + 16).toInt
-	   }
+	  }
 	   
 
-		 val anno:String = Integer.toString(cal.get(Calendar.YEAR))
-		 val mese:String = "0" + Integer.toString(cal.get(Calendar.MONTH) + 1) takeRight 2
+		val anno:String = Integer.toString(cal.get(Calendar.YEAR))
+		val mese:String = "0" + Integer.toString(cal.get(Calendar.MONTH) + 1) takeRight 2
 		 
-		 val appName:String = if(commandLine.hasOption(commandLineOptions.aggregatiOrari.getOpt)){
-			 "FM Aggregazione Misure Orarie"
-		 }else if(commandLine.hasOption(commandLineOptions.aggregatiAM.getOpt)){
-			 "FM Aggregazione Am Misure Master"
-		 }else{
-			 "X"
-		 }
+		val appName:String = if(commandLine.hasOption(commandLineOptions.aggregatiOrari.getOpt)){
+			"FM Aggregazione Misure Orarie"
+		}else if(commandLine.hasOption(commandLineOptions.aggregatiAM.getOpt)){
+			"FM Aggregazione Am Misure Master"
+		}else{
+			"X"
+		}
 	   
-		 val master:String = if (commandLine.hasOption(commandLineOptions.local.getOpt)) {
-			 "local[*]"
-		 }else{
-			 "yarn-client"
-		 }
+		val master:String = if (commandLine.hasOption(commandLineOptions.local.getOpt)) {
+			"local[*]"
+		}else{
+			"yarn-client"
+		}
      
-		 Args(anno, mese, null, null, appName, null, null, null, master, null, null, null, null, annomesegiornodir)
+		Args(anno, mese, null, null, appName, null, null, null, master, null, null, null, null, annomesegiornodir)
 }
 	
 	def getArgs(commandLine: CommandLine): Args = {
-	  val commandLineOptions = new CommandLineOptions()
+	   val commandLineOptions = new CommandLineOptions()
 	  
 	   val timeZone = prop.getProperty("spark.app.time_zone")
 	  
@@ -205,7 +205,7 @@ def getArgsAggregati(commandLine: CommandLine): Args = {
   	     calXml.add(Calendar.DAY_OF_MONTH, -1)
   	   }
 	   }catch{
-	    case e: Exception => throw new Exception("Inseriti valori non validi", e)
+	     case e: Exception => throw new Exception("Inseriti valori non validi", e)
 	   }
 	   
 	   
@@ -265,7 +265,7 @@ def getArgsAggregati(commandLine: CommandLine): Args = {
 			 "Test"
 		 }else{
 			 "X"
-		 };
+		 }
 						
 		 /*
 		  * cartella temporanea dove vengono decompressi i file di misura zippati

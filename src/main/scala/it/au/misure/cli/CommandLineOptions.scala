@@ -82,12 +82,14 @@ class CommandLineOptions extends Serializable{
 		o.setOptionalArg(false)
 		o
 	}
+	
 	def mese: CliOption = {
 	  val o = new CliOption("m", "mese", true, "Mese di riferimento")
 	  o.setArgName("MM")
 		o.setOptionalArg(false)
 		o
 	}
+	
 	def giorno: CliOption = {
 	  val o = new CliOption("s", "giorno", true, "Giorno di riferimento")
 	  o.setArgName("GG")

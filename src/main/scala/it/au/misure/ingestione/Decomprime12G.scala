@@ -166,7 +166,6 @@ object Decomprime12G extends LoggingSupport {
 	
 	def scansionaTmpDirPath(tmpDirPath:String, slash:String) : List[String] = {
 	  try{
-	    
   	  val xmls = new File ( tmpDirPath )
   		val xmlPathList = if(xmls.exists() && xmls.isDirectory() && xmls.listFiles().length > 0){
 	    val xmlList = xmls.listFiles().map{ xml => 

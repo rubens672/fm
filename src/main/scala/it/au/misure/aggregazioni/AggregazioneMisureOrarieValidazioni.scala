@@ -365,7 +365,6 @@ object AggregazioneMisureOrarieValidazioni extends LoggingSupport {
 		log.info("***** rdd.cache OK")
 
 
-
 		log.info("***** xml scartati OK")
 
 		val dfQS1 = sqlCtx.createDataFrame(rdd, schemaOre)
@@ -373,11 +372,11 @@ object AggregazioneMisureOrarieValidazioni extends LoggingSupport {
 
 
 		dfQS1
-		.write
-		.format("parquet")
-		.mode(SaveMode.Append)
-		.partitionBy("anno","mese","pivadistributore","versione")
-		.save(orarie)
+  		.write
+  		.format("parquet")
+  		.mode(SaveMode.Append)
+  		.partitionBy("anno","mese","pivadistributore","versione")
+  		.save(orarie)
 		log.info("***** insert misure ore OK")
 
 
@@ -440,21 +439,21 @@ object AggregazioneMisureOrarieValidazioni extends LoggingSupport {
 			//AND NVL(D_FINE,TO_DATE('20991231','YYYYMMDD')) and T_PIVA = ? and T_CODICE_POD=?
 			try{
 				val ps1 = conn3.prepareStatement(queryPs1)
-						ps1.setString(1, anno + mese + giorno)
-						ps1.setString(2, pod)
-						val rs1 = ps1.executeQuery()
+				ps1.setString(1, anno + mese + giorno)
+				ps1.setString(2, pod)
+				val rs1 = ps1.executeQuery()
 
-						val flaguddpod = if(rs1.next()){
-							val nIdUdd = rs1.getString("N_ID_UDD")
-							val tPiva = rs1.getString("T_PIVA")
-							rs1.close()
-							ps1.close()
-							("Y", nIdUdd, tPiva)
-						}else{
-							rs1.close()
-							ps1.close()
-							("N", "N", "N")
-						}
+				val flaguddpod = if(rs1.next()){
+					val nIdUdd = rs1.getString("N_ID_UDD")
+					val tPiva = rs1.getString("T_PIVA")
+					rs1.close()
+					ps1.close()
+					("Y", nIdUdd, tPiva)
+				}else{
+					rs1.close()
+					ps1.close()
+					("N", "N", "N")
+				}
 
 				flaguddpod
 			}catch{
@@ -518,10 +517,10 @@ object AggregazioneMisureOrarieValidazioni extends LoggingSupport {
 				val rs = ps2.executeQuery()
 				if(rs.next() ){
 					val statopod:String = rs.getString("STATO_POD")
-				val isttrat:String = rs.getString("IS_T_TRATTAMENTO")
-				rs.close()
-				ps2.close()
-				(statopod,isttrat)
+  				val isttrat:String = rs.getString("IS_T_TRATTAMENTO")
+  				rs.close()
+  				ps2.close()
+  				(statopod,isttrat)
 				}else{
 					rs.close()
 					ps2.close()
