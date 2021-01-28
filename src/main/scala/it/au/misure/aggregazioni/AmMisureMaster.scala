@@ -39,12 +39,12 @@ object AmMisureMaster extends LoggingSupport{
 		
 	  
 		val conf = new SparkConf()
-		.setAppName( argsObj.appName )
-		.set("spark.shuffle.service.enabled", "false")
-		.set("spark.dynamicAllocation.enabled", "false")
-		.set("spark.io.compression.codec", "snappy")
-		.set("spark.rdd.compress", "true")
-		.setMaster( argsObj.master )
+  		.setAppName( argsObj.appName )
+  		.set("spark.shuffle.service.enabled", "false")
+  		.set("spark.dynamicAllocation.enabled", "false")
+  		.set("spark.io.compression.codec", "snappy")
+  		.set("spark.rdd.compress", "true")
+  		.setMaster( argsObj.master )
 
 	  val sc = new SparkContext(conf)
 	  sc.setLogLevel("ERROR")
@@ -168,11 +168,11 @@ object AmMisureMaster extends LoggingSupport{
 
 
 	  dfAggr4
-	  .write
-	  .format("parquet")
-	  .mode(SaveMode.Append)
-	  .partitionBy("annoaggr","meseaggr","pivadistributoreaggr","versione")
-	  .save(am)
+  	  .write
+  	  .format("parquet")
+  	  .mode(SaveMode.Append)
+  	  .partitionBy("annoaggr","meseaggr","pivadistributoreaggr","versione")
+  	  .save(am)
 	  log.info("***** insert aggregazioni_misure_am su hdfs OK")
 		    
 		    
@@ -249,9 +249,9 @@ object AmMisureMaster extends LoggingSupport{
         
         
 	  aggrCalc
-	  .write
-	  .mode(SaveMode.Append)
-	  .jdbc(jdbcUrl, "PRT_TMO_AGGREGATI_CALCOLATI", connectionProperties)
+  	  .write
+  	  .mode(SaveMode.Append)
+  	  .jdbc(jdbcUrl, "PRT_TMO_AGGREGATI_CALCOLATI", connectionProperties)
 
 	  log.info("*** write su PRT_TMO_AGGREGATI_CALCOLATI OK")
 	  log.info(s"SELECT * FROM PRT_TMO_AGGREGATI_CALCOLATI WHERE ANNOMESE=${annoAggr}${meseAggr} AND UID_ELAB=${uidElab}")
